@@ -17,9 +17,7 @@ export interface IColumnItem {
 
 export type IColumns = Array<IColumnItem>
 
-type dataSourceItem = {
-  [propName: string]: any
-}
+type dataSourceItem = object
 
 export type IdataSource = Array<dataSourceItem>
 export interface IdataSourceOption {
