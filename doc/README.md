@@ -1,5 +1,5 @@
 Excel exporter dependency excel.js It can be used well with table component of antd. It can export excel file easily and quickly by setcolumns () and setdatasource()
-
+中文文档
 # dev
 ```bash
 git clone https://github.com/chaomingd/excel-exporter.git
