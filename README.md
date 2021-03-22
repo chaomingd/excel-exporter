@@ -70,7 +70,7 @@ excelExporter.exportFile('personInfo.xlsx', () => {
 ```
 
 ## Support tree structure
-![]('./doc/imgs/tree.jpg')
+![](./doc/imgs/tree.jpg)
 ```js
 import {
   ExcelExporter
