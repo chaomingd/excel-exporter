@@ -11,6 +11,12 @@ npm install
 npm run start
 ```
 
+# Dependency
+```bash
+npm install exceljs --save
+npm install file-saver --save
+```
+
 # quik start
 ```javascript
 import {
@@ -162,7 +168,97 @@ excelExporter.exportFile('personInfo.xlsx', () => {
 })
 ```
 
-
+# support head group
+![](imgs/header-group.jpg)
+```javascript
+import {
+  ExcelExporter
+} from 'excel-exporter'
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    width: 10
+  },
+  {
+    title: 'Other',
+    children: [
+      {
+        title: 'Age',
+        dataIndex: 'age',
+        width: 20
+      },
+      {
+        title: 'Address',
+        children: [
+          {
+            title: 'Street',
+            dataIndex: 'street',
+            width: 20
+          },
+          {
+            title: 'Block',
+            children: [
+              {
+                title: 'Building',
+                dataIndex: 'building',
+                width: 10
+              },
+              {
+                title: 'Door No.',
+                dataIndex: 'number',
+                width: 10
+              }
+            ],
+          },
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Company',
+    children: [
+      {
+        title: 'Company Address',
+        dataIndex: 'companyAddress',
+        width: 20
+      },
+      {
+        title: 'Company Name',
+        dataIndex: 'companyName',
+      }
+    ]
+  },
+  {
+    title: 'Gender',
+    dataIndex: 'gender',
+    key: 'gender',
+    width: 8
+  }
+];
+const data = [];
+for (let i = 0; i < 100; i++) {
+  data.push({
+    key: i,
+    name: 'John Brown',
+    age: i + 1,
+    street: 'Lake Park',
+    building: 'C',
+    number: 2035,
+    companyAddress: 'Lake Street 42',
+    companyName: 'SoftLake Co',
+    gender: 'M',
+  })
+}
+const excelExporter = new ExcelExporter({
+  sheetName: 'test'
+})
+excelExporter.setColumns(columns)
+excelExporter.setDataSource(data)
+excelExporter.exportFile('test', () => {
+  console.log('done')
+})
+```
 
 # API
 

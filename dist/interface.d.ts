@@ -6,7 +6,7 @@ export declare type IStyle = Partial<ExcelJS.Style>;
 export interface IColumnItem {
     title: string;
     key?: string;
-    dataIndex: string;
+    dataIndex?: string;
     width?: number;
     style?: IStyle;
     colStyle?: IStyle;
@@ -14,9 +14,7 @@ export interface IColumnItem {
     [propName: string]: any;
 }
 export declare type IColumns = Array<IColumnItem>;
-declare type dataSourceItem = {
-    [propName: string]: any;
-};
+declare type dataSourceItem = object;
 export declare type IdataSource = Array<dataSourceItem>;
 export interface IdataSourceOption {
     childrenColumnName: string;

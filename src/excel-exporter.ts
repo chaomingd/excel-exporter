@@ -24,18 +24,19 @@ import {
 
 class ExcelExporter {
   private styleKeys = ['numFmt', 'font', 'alignment', 'border', 'fill'] // 样式属性
-  private _workbook: ExcelJS.Workbook;
-  private _worksheet: ExcelJS.Worksheet;
+  private _workbook: null | ExcelJS.Workbook;
+  private _worksheet: null | ExcelJS.Worksheet;
   private _columns: IColumns = [];
   private _headerDepth: number = 1;
   private _childrenColumnName: string = 'children'; // 树形结构时子级的属性
   private _indentSize: number = 3; // 树结构时缩进的宽度
   private _dataSource: IdataSource = [];
+  private _isDisposed: boolean = false;
   constructor (options: IExcelExportOptions) {
     if (!options || !isObject(options)) throw new Error('options must be object')
     const { sheetName } = options
     this._workbook = new ExcelJS.Workbook()
-    this._worksheet = this.workbook.addWorksheet(sheetName)
+    this._worksheet = this.workbook!.addWorksheet(sheetName)
   }
   get workbook () {
     return this._workbook
@@ -43,13 +44,25 @@ class ExcelExporter {
   get worksheet () {
     return this._worksheet
   }
+  dispose () {
+    this._workbook = null
+    this._worksheet = null
+    this._isDisposed = true
+    this._columns = []
+    this._dataSource = []
+  }
+  error () {
+    if (this._isDisposed) throw new Error('excel-exporter is disposed can not be used again')
+  }
   setColumns (columns: IColumns) { // 设置列 表头
+    this.error()
     if (!Array.isArray(columns)) throw new Error('columns must be array')
     const result = this.calcHeaderDepth(columns)
     this._columns = result.newColumns
     this._headerDepth = result.maxDepth
   }
   setDataSource (data: IdataSource, options?: IdataSourceOption) { // 设置数据  showOutlineLevel 是否显示大纲级别, 对于树形结构有用
+    this.error()
     if (!Array.isArray(data)) throw new Error('dataSource must be array')
     if (options && !isObject(options)) throw new Error('options must be object')
     this._dataSource = data
@@ -64,6 +77,7 @@ class ExcelExporter {
     }
   }
   exportFile (fileName: string, done: () => any) { // 导出文件
+    this.error()
     const sheetHeader = this.resolveRowHeader(this._columns, this._headerDepth)
     const dataRowsResult = this.resolveDataSource(this._dataSource)
     this.exportExcel({
@@ -73,6 +87,7 @@ class ExcelExporter {
     }, done)
   }
   exportExcel (option: IExportExcelOption, done: () => any) { // 写入excel数据并导出
+    this.error()
     if (!option || !isObject(option)) throw new Error('option must be object')
     const { sheetHeader, dataRowsResult, fileName } = option
     const workbook = this.workbook
@@ -82,12 +97,13 @@ class ExcelExporter {
     }
     this.renderHeaderCell(headerCells) // 渲染表头数据
     this.renderDataSource(dataRowsResult, sheetHeader) // 渲染数据
-    workbook.xlsx.writeBuffer().then((buffer) => {
+    workbook!.xlsx.writeBuffer().then((buffer) => {
       done && done()
       saveAs(new Blob([buffer], { type: 'application/octet-stream' }), fileName + '.xlsx');
     })
   }
   correctHeaderCells(treeWidth: number, sheetHeader: IsheetHeader) { // 修正表头的colSpan 和 colIndex
+    this.error()
     sheetHeader.cells.forEach((headerCell: IHeaderCell) => {
       if (headerCell.colIndex === 1) { // 第一列增加colSpan
         headerCell.colSpan += treeWidth - 1
@@ -101,13 +117,14 @@ class ExcelExporter {
     })
   }
   renderDataSource (dataRowsResult: IDataRowsResult, sheetHeader: IsheetHeader) { // 渲染数据
+    this.error()
     const worksheet = this.worksheet
     const startRow = sheetHeader.headerEndRow + 1
     const dataItems = sheetHeader.dataItems
     const _this = this
     dataRowsResult.dataRows.forEach((dataRowItem: IDataRowItem, index: number) => {
       const rowIndex: number = index + startRow
-      const row: ExcelJS.Row = worksheet.getRow(rowIndex)
+      const row: ExcelJS.Row = worksheet!.getRow(rowIndex)
       dataItems.forEach((dataItem: IDataItem) => {
         let cellColIndex: number
         if (dataItem.colIndex === 1) {
@@ -116,22 +133,22 @@ class ExcelExporter {
             // 横向合并
             const hStartColIndex = cellColIndex
             const hEndColIndex = dataRowsResult.maxStartColIndex
-            worksheet.mergeCells(rowIndex, hStartColIndex, rowIndex, hEndColIndex)
+            worksheet!.mergeCells(rowIndex, hStartColIndex, rowIndex, hEndColIndex)
   
             // 纵向合并
             if (dataRowItem.depth > 2) {
               const vStartRowIndex = rowIndex + 1
               const vEndRowIndex = rowIndex + dataRowItem.depth - 1
               // console.log(vStartRowIndex, cellColIndex, vEndRowIndex, cellColIndex)
-              worksheet.mergeCells(vStartRowIndex, cellColIndex, vEndRowIndex, cellColIndex)
+              worksheet!.mergeCells(vStartRowIndex, cellColIndex, vEndRowIndex, cellColIndex)
   
               // 设置树节点缩进
-              const column = worksheet.getColumn(cellColIndex)
+              const column = worksheet!.getColumn(cellColIndex)
               column.width = this._indentSize
             }
             if (dataRowItem.startColIndex > 1 && dataRowItem.startColIndex === dataRowsResult.maxStartColIndex) { // 设置树形结构最后一个缩进列的宽度为第一个表头的宽度
               if (mapKeyProp(sheetHeader.cells, '0.width', false)) {
-                const firstColGroupLastColumn = worksheet.getColumn(cellColIndex)
+                const firstColGroupLastColumn = worksheet!.getColumn(cellColIndex)
                 if (!firstColGroupLastColumn.width) {
                   firstColGroupLastColumn.width = sheetHeader.cells[0].width
                 }
@@ -148,10 +165,11 @@ class ExcelExporter {
     })
   }
   renderHeaderCell (headerCells: IHeaderCells) { // 渲染表头
+    this.error()
     const worksheet = this.worksheet
     headerCells.forEach((headerCell: IHeaderCell) => {
-      const row = worksheet.getRow(headerCell.rowIndex)
-      const column = worksheet.getColumn(headerCell.colIndex)
+      const row = worksheet!.getRow(headerCell.rowIndex)
+      const column = worksheet!.getColumn(headerCell.colIndex)
       if (headerCell.colSpan === 1) {
         this.setColStyle(column, headerCell.width, headerCell.colStyle || {}) // 设置列的宽度及样式
       }
@@ -164,7 +182,7 @@ class ExcelExporter {
         const endRowIndex = headerCell.rowIndex + headerCell.rowSpan - 1
         const startColIndex = headerCell.colIndex
         const endColIndex = headerCell.colIndex + headerCell.colSpan - 1
-        worksheet.mergeCells(startRowIndex, startColIndex, endRowIndex, endColIndex)
+        worksheet!.mergeCells(startRowIndex, startColIndex, endRowIndex, endColIndex)
       }
     })
   }
@@ -220,6 +238,7 @@ class ExcelExporter {
     }
   }
   resolveDataSource (data: IdataSource) { // 处理数据， 生成每行数据的开始列号、深度、及最大深度等信息
+    this.error()
     const dataRows: IDataRowItems = []
     let maxStartColIndex = 1
     const _this = this
@@ -264,6 +283,7 @@ class ExcelExporter {
     }
   }
   resolveRowHeader (columns: IColumns, rowDepth: number) { // 处理表头， 输出一维数组， 包含每个表头的rowIndex, colIndex, colSpan, rowSpan以及样式
+    this.error()
     const results:IHeaderCells = []
     const dataItems: IDataItems = []
     const _this = this;

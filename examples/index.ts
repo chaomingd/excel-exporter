@@ -4,9 +4,6 @@ import {
 
 
 
-const excelExporter = new ExcelExporter({
-  sheetName: 'test'
-})
 const columns = [
   {
     title: 'Name',
@@ -113,11 +110,14 @@ const treeData = [
   },
 ];
 
-
+// normal
 const btn1 = document.createElement('button') // normal
 btn1.innerText = 'export'
 document.body.appendChild(btn1)
 btn1.addEventListener('click', () => {
+  const excelExporter = new ExcelExporter({
+    sheetName: '人员信息'
+  })
   excelExporter.setColumns(columns)
   excelExporter.setDataSource(data)
   excelExporter.exportFile('test', () => {
@@ -125,14 +125,112 @@ btn1.addEventListener('click', () => {
   })
 })
 
+// tree structor
 const btn2 = document.createElement('button')
 btn2.innerText = 'export tree structure'
 
 document.body.appendChild(btn2)
 btn2.addEventListener('click', () => {
+  const excelExporter = new ExcelExporter({
+    sheetName: '人员信息'
+  })
   excelExporter.setColumns(columns)
   excelExporter.setDataSource(treeData)
   excelExporter.exportFile('test-treeStructure', () => {
     console.log('done')
   })
 })
+
+
+// header group
+const headerGroupColumns = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    width: 10
+  },
+  {
+    title: 'Other',
+    children: [
+      {
+        title: 'Age',
+        dataIndex: 'age',
+        width: 20
+      },
+      {
+        title: 'Address',
+        children: [
+          {
+            title: 'Street',
+            dataIndex: 'street',
+            width: 20
+          },
+          {
+            title: 'Block',
+            children: [
+              {
+                title: 'Building',
+                dataIndex: 'building',
+                width: 10
+              },
+              {
+                title: 'Door No.',
+                dataIndex: 'number',
+                width: 10
+              }
+            ],
+          },
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Company',
+    children: [
+      {
+        title: 'Company Address',
+        dataIndex: 'companyAddress',
+        width: 20
+      },
+      {
+        title: 'Company Name',
+        dataIndex: 'companyName',
+      }
+    ]
+  },
+  {
+    title: 'Gender',
+    dataIndex: 'gender',
+    key: 'gender',
+    width: 8
+  }
+];
+const dataGroup:object[] = [];
+for (let i = 0; i < 100; i++) {
+  const dataItem = {
+    key: i,
+    name: 'John Brown',
+    age: i + 1,
+    street: 'Lake Park',
+    building: 'C',
+    number: 2035,
+    companyAddress: 'Lake Street 42',
+    companyName: 'SoftLake Co',
+    gender: 'M',
+  }
+  dataGroup.push(dataItem)
+}
+const btn3 = document.createElement('button')
+btn3.innerText = 'exporter header group'
+btn3.onclick = function () {
+  const excelExporter = new ExcelExporter({
+    sheetName: '人员信息'
+  })
+  excelExporter.setColumns(headerGroupColumns)
+  excelExporter.setDataSource(dataGroup)
+  excelExporter.exportFile('人员信息', () => {
+    console.log('完成')
+  })
+}
+document.body.appendChild(btn3)
+

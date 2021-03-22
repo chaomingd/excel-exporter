@@ -139,6 +139,7 @@
       this._indentSize = 3; // 树结构时缩进的宽度
 
       this._dataSource = [];
+      this._isDisposed = false;
       if (!options || !isObject(options)) throw new Error('options must be object');
       var sheetName = options.sheetName;
       this._workbook = new ExcelJS__default['default'].Workbook();
@@ -146,8 +147,23 @@
     }
 
     _createClass(ExcelExporter, [{
+      key: "dispose",
+      value: function dispose() {
+        this._workbook = null;
+        this._worksheet = null;
+        this._isDisposed = true;
+        this._columns = [];
+        this._dataSource = [];
+      }
+    }, {
+      key: "error",
+      value: function error() {
+        if (this._isDisposed) throw new Error('excel-exporter is disposed can not be used again');
+      }
+    }, {
       key: "setColumns",
       value: function setColumns(columns) {
+        this.error();
         if (!Array.isArray(columns)) throw new Error('columns must be array');
         var result = this.calcHeaderDepth(columns);
         this._columns = result.newColumns;
@@ -156,6 +172,7 @@
     }, {
       key: "setDataSource",
       value: function setDataSource(data, options) {
+        this.error();
         if (!Array.isArray(data)) throw new Error('dataSource must be array');
         if (options && !isObject(options)) throw new Error('options must be object');
         this._dataSource = data;
@@ -176,6 +193,7 @@
     }, {
       key: "exportFile",
       value: function exportFile(fileName, done) {
+        this.error();
         var sheetHeader = this.resolveRowHeader(this._columns, this._headerDepth);
         var dataRowsResult = this.resolveDataSource(this._dataSource);
         this.exportExcel({
@@ -187,6 +205,7 @@
     }, {
       key: "exportExcel",
       value: function exportExcel(option, done) {
+        this.error();
         if (!option || !isObject(option)) throw new Error('option must be object');
         var sheetHeader = option.sheetHeader,
             dataRowsResult = option.dataRowsResult,
@@ -213,6 +232,7 @@
     }, {
       key: "correctHeaderCells",
       value: function correctHeaderCells(treeWidth, sheetHeader) {
+        this.error();
         sheetHeader.cells.forEach(function (headerCell) {
           if (headerCell.colIndex === 1) {
             // 第一列增加colSpan
@@ -232,6 +252,7 @@
       value: function renderDataSource(dataRowsResult, sheetHeader) {
         var _this2 = this;
 
+        this.error();
         var worksheet = this.worksheet;
         var startRow = sheetHeader.headerEndRow + 1;
         var dataItems = sheetHeader.dataItems;
@@ -288,6 +309,7 @@
       value: function renderHeaderCell(headerCells) {
         var _this3 = this;
 
+        this.error();
         var worksheet = this.worksheet;
         headerCells.forEach(function (headerCell) {
           var row = worksheet.getRow(headerCell.rowIndex);
@@ -383,6 +405,7 @@
     }, {
       key: "resolveDataSource",
       value: function resolveDataSource(data) {
+        this.error();
         var dataRows = [];
         var maxStartColIndex = 1;
 
@@ -440,6 +463,7 @@
     }, {
       key: "resolveRowHeader",
       value: function resolveRowHeader(columns, rowDepth) {
+        this.error();
         var results = [];
         var dataItems = [];
 

@@ -8,6 +8,11 @@ npm install
 
 npm run start
 ```
+# Dependency
+```bash
+npm install exceljs --save
+npm install file-saver --save
+```
 
 # 简单使用
 ```javascript
@@ -51,7 +56,7 @@ const excelExporter = new ExcelExporter({
 })
 excelExporter.setColumns(columns)
 excelExporter.setDataSource(dataSource)
-excelExporter.exportFile('人员信息.xlsx', () => {
+excelExporter.exportFile('人员信息', () => {
   console.log('完成') // 注意在弹出下载框点击保存和取消都会触发
 })
 ```
@@ -154,11 +159,102 @@ excelExporter.setDataSource(dataSource, {
     childrenColumnName: 'children', // 树形结构时子级的属性
     indentSize: 3 // 树结构时缩进的字符宽度
 })
-excelExporter.exportFile('人员信息.xlsx', () => {
+excelExporter.exportFile('人员信息', () => {
   console.log('完成') // 注意在弹出下载框点击保存和取消都会触发
 })
 ```
 
+# 支持表头分组
+![](imgs/header-group.jpg)
+```javascript
+import {
+  ExcelExporter
+} from 'excel-exporter'
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    width: 10
+  },
+  {
+    title: 'Other',
+    children: [
+      {
+        title: 'Age',
+        dataIndex: 'age',
+        width: 20
+      },
+      {
+        title: 'Address',
+        children: [
+          {
+            title: 'Street',
+            dataIndex: 'street',
+            width: 20
+          },
+          {
+            title: 'Block',
+            children: [
+              {
+                title: 'Building',
+                dataIndex: 'building',
+                width: 10
+              },
+              {
+                title: 'Door No.',
+                dataIndex: 'number',
+                width: 10
+              }
+            ],
+          },
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Company',
+    children: [
+      {
+        title: 'Company Address',
+        dataIndex: 'companyAddress',
+        width: 20
+      },
+      {
+        title: 'Company Name',
+        dataIndex: 'companyName',
+      }
+    ]
+  },
+  {
+    title: 'Gender',
+    dataIndex: 'gender',
+    key: 'gender',
+    width: 8
+  }
+];
+const data = [];
+for (let i = 0; i < 100; i++) {
+  data.push({
+    key: i,
+    name: 'John Brown',
+    age: i + 1,
+    street: 'Lake Park',
+    building: 'C',
+    number: 2035,
+    companyAddress: 'Lake Street 42',
+    companyName: 'SoftLake Co',
+    gender: 'M',
+  })
+}
+const excelExporter = new ExcelExporter({
+  sheetName: '人员信息'
+})
+excelExporter.setColumns(columns)
+excelExporter.setDataSource(data)
+excelExporter.exportFile('人员信息', () => {
+  console.log('完成')
+})
+```
 
 
 # API
@@ -206,6 +302,7 @@ workbook.properties.date1904 = true;
 | setColumns    | 设置列 同antd table Columns        | (columns: IColumns[]) => void 后面详细介绍IColumn            | -      |
 | setDataSource | 设置数据源 同antd table dataSource | (data:  IdataSource, options?: IdataSourceOption) => void 后面详细介绍 | -      |
 | exportFile    | 将数据导出excel文件                | (filename: string, done) => void                             | -      |
+| dispose       | 清理                               | function                                                     |        |
 
 ### IColumn 列类型
 

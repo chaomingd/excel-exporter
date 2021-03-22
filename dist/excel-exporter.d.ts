@@ -9,9 +9,12 @@ declare class ExcelExporter {
     private _childrenColumnName;
     private _indentSize;
     private _dataSource;
+    private _isDisposed;
     constructor(options: IExcelExportOptions);
-    get workbook(): ExcelJS.Workbook;
-    get worksheet(): ExcelJS.Worksheet;
+    get workbook(): ExcelJS.Workbook | null;
+    get worksheet(): ExcelJS.Worksheet | null;
+    dispose(): void;
+    error(): void;
     setColumns(columns: IColumns): void;
     setDataSource(data: IdataSource, options?: IdataSourceOption): void;
     exportFile(fileName: string, done: () => any): void;

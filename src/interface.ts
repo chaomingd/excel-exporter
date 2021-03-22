@@ -7,7 +7,7 @@ export type IStyle = Partial<ExcelJS.Style>
 export interface IColumnItem {
   title: string;
   key?: string;
-  dataIndex: string;
+  dataIndex?: string;
   width?: number;
   style?: IStyle;
   colStyle?: IStyle;

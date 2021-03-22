@@ -1,5 +1,5 @@
 {
-  "name": "excel-exporter",
+  "name": "table-excel-exporter",
   "version": "1.0.0",
   "description": "table to excel",
   "main": "index.js",
@@ -20,9 +20,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chaomingd/excel-exporter.git"
+    "url": "git+https://gitee.com/zeng-chao-ming/excel-exporter.git"
   },
-  "homepage": "https://github.com/chaomingd/excel-exporter#readme",
+  "homepage": "https://gitee.com/zeng-chao-ming/excel-exporter.git#readme",
   "author": "chaomingd",
   "license": "ISC",
   "peerDependencies": {
