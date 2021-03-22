@@ -70,7 +70,7 @@ excelExporter.exportFile('personInfo.xlsx', () => {
 ```
 
 ## Support tree structure
-![]('doc/imgs/tree.jpg')
+![]('./doc/imgs/tree.jpg')
 ```js
 import {
   ExcelExporter
@@ -169,7 +169,7 @@ excelExporter.exportFile('personInfo.xlsx', () => {
 ```
 
 # support head group
-![](imgs/header-group.jpg)
+![](./doc/imgs/header-group.jpg)
 ```javascript
 import {
   ExcelExporter

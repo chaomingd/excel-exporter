@@ -62,7 +62,7 @@ excelExporter.exportFile('人员信息', () => {
 ```
 
 ## 支持树形结构
-![](imgs/tree.jpg)
+![](./imgs/tree.jpg)
 
 ```js
 import {
@@ -165,7 +165,7 @@ excelExporter.exportFile('人员信息', () => {
 ```
 
 # 支持表头分组
-![](imgs/header-group.jpg)
+![](./imgs/header-group.jpg)
 ```javascript
 import {
   ExcelExporter
