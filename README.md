@@ -11,17 +11,18 @@ npm install
 npm run start
 ```
 
-# Dependency
+# install
 ```bash
 npm install exceljs --save
 npm install file-saver --save
+npm install table-excel-exporter --save
 ```
 
 # quik start
 ```javascript
 import {
   ExcelExporter
-} from 'excel-exporter'
+} from 'table-excel-exporter'
 const columns = [
   {
     title: 'Name',
@@ -74,7 +75,7 @@ excelExporter.exportFile('personInfo.xlsx', () => {
 ```js
 import {
   ExcelExporter
-} from 'excel-exporter'
+} from 'table-excel-exporter'
 const columns = [
   {
     title: 'Name',
@@ -173,7 +174,7 @@ excelExporter.exportFile('personInfo.xlsx', () => {
 ```javascript
 import {
   ExcelExporter
-} from 'excel-exporter'
+} from 'table-excel-exporter'
 const columns = [
   {
     title: 'Name',

@@ -8,17 +8,18 @@ npm install
 
 npm run start
 ```
-# Dependency
+# install
 ```bash
 npm install exceljs --save
 npm install file-saver --save
+npm install table-excel-exporter --save
 ```
 
 # 简单使用
 ```javascript
 import {
   ExcelExporter
-} from 'excel-exporter'
+} from 'table-excel-exporter'
 const columns = [
   {
     title: '名称',
@@ -67,7 +68,7 @@ excelExporter.exportFile('人员信息', () => {
 ```js
 import {
   ExcelExporter
-} from 'excel-exporter'
+} from 'table-excel-exporter'
 const columns = [
   {
     title: 'Name',
@@ -169,7 +170,7 @@ excelExporter.exportFile('人员信息', () => {
 ```javascript
 import {
   ExcelExporter
-} from 'excel-exporter'
+} from 'table-excel-exporter'
 const columns = [
   {
     title: 'Name',
